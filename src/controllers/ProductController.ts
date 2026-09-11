@@ -64,6 +64,7 @@ export class ProductController {
       next(err);
     }
   }
+  //teste
 
   async destroy(
     req: Request,
