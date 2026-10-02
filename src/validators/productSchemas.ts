@@ -9,3 +9,4 @@ export const createProductSchema = z.object({
 export const updateProductSchema = createProductSchema.partial();
 //ola
 //Vou terminar professor 
+//e os bate estaca
