@@ -3,7 +3,10 @@ import { UserController } from "../controllers/UserController";
 import { validate } from "../middlewares/validate";
 import { createUserSchema, updateUserSchema } from "../validators/userSchemas";
 
+import { validateId } from "../middlewares/validateParams";
+
 const router = Router();
+router.param("id", validateId);
 const ctrl = new UserController();
 
 router.get("/", ctrl.index.bind(ctrl));

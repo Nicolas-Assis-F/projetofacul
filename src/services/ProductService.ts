@@ -9,8 +9,7 @@ export class ProductService {
 
   /**
    * Returns a paginated list of products.
-   *e os bate estaca
-  
+   *
    * skip = (page - 1) * limit  →  offset-based pagination
    * take = limit               →  how many records per page
    */

@@ -6,7 +6,10 @@ import {
   updateProductSchema,
 } from "../validators/productSchemas";
 
+import { validateId } from "../middlewares/validateParams";
+
 const router = Router();
+router.param("id", validateId);
 const ctrl = new ProductController();
 
 router.get("/", ctrl.index.bind(ctrl));

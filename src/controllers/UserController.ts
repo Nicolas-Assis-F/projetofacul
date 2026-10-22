@@ -1,3 +1,4 @@
+import { parsePagination } from "../middlewares/validateParams";
 import { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/UserService";
 
@@ -6,11 +7,7 @@ const userService = new UserService();
 export class UserController {
   async index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const page = Math.max(1, parseInt(req.query.page as string) || 1);
-      const limit = Math.min(
-        100,
-        Math.max(1, parseInt(req.query.limit as string) || 10),
-      );
+      const { page, limit } = parsePagination(req.query);
       const result = await userService.findAll({ page, limit });
       res.json(result);
     } catch (err) {

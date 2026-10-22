@@ -1,3 +1,4 @@
+import { parsePagination } from "../middlewares/validateParams";
 import { Request, Response, NextFunction } from "express";
 import { ProductService } from "../services/ProductService";
 
@@ -6,11 +7,7 @@ const productService = new ProductService();
 export class ProductController {
   async index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const page = Math.max(1, parseInt(req.query.page as string) || 1);
-      const limit = Math.min(
-        100,
-        Math.max(1, parseInt(req.query.limit as string) || 10),
-      );
+      const { page, limit } = parsePagination(req.query);
       const result = await productService.findAll({ page, limit });
       res.json(result);
     } catch (err) {
@@ -64,7 +61,6 @@ export class ProductController {
       next(err);
     }
   }
-  //teste
 
   async destroy(
     req: Request,

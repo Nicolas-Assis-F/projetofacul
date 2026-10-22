@@ -4,7 +4,7 @@ RESTful API built with **Node.js**, **Express**, **TypeScript**, **TypeORM** and
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - PostgreSQL 14+
 - npm
 
@@ -146,7 +146,7 @@ Example: `GET /api/v1/users?page=2&limit=5`
 
 ```bash
 # Generate a new migration after changing entities
-npm run migration:generate -- src/migrations/NewMigrationName
+npm run typeorm -- migration:generate src/migrations/NewMigrationName -d src/config/database.ts
 
 # Run pending migrations
 npm run migration:run
@@ -155,20 +155,67 @@ npm run migration:run
 npm run migration:revert
 ```
 
-## Git Setup & GitHub
+## Validação e testes
 
 ```bash
-# Initialize repository and first commit
-git init
-git add .
-git commit -m "feat: initial RESTful API with Node.js, Express, TypeScript, TypeORM and PostgreSQL"
-
-# Create a new empty repository on https://github.com/new
-# Then link and push:
-git remote add origin https://github.com/YOUR_USERNAME/baiao-api.git
-git branch -M main
-git push -u origin main
+npm test
+# Use um banco isolado, já migrado e populado:
+DATABASE_URL=postgresql://user:password@localhost:5432/baiao_test TEST_DATABASE=true npm run test:integration
+npm audit
 ```
+
+A integração exercita criação, leitura, atualização, exclusão, paginação,
+relacionamentos, e-mail duplicado e referências inválidas em PostgreSQL real.
+O GitHub Actions executa esses testes a cada push e pull request.
+
+## Rotas adicionais e erros
+
+- `GET /`: nome, versão e diretório de endpoints.
+- `GET /health`: disponibilidade do processo.
+- `GET /ready`: disponibilidade do banco (503 se indisponível).
+- `GET /api/v1/catalogs`: situações de usuários, categorias e situações de produtos,
+  com os IDs que devem ser enviados nos cadastros.
+
+IDs e parâmetros de paginação inválidos retornam 400. JSON malformado retorna
+400; corpo inválido, atualização vazia e referências inexistentes retornam 422;
+e-mail já cadastrado retorna 409; registro ou rota inexistente retorna 404.
+Nomes são aparados e e-mails são normalizados para minúsculas. `PUT` aceita
+atualização parcial, mas exige pelo menos um campo conhecido.
+
+## Execução com Docker
+
+```bash
+cp .env.example .env
+# Defina DB_PASS no .env antes de iniciar.
+docker compose up --build -d
+```
+
+A API fica em `http://localhost:3000`; o PostgreSQL usa volume persistente.
+Migrações e seed são executados na inicialização. `docker compose down` preserva
+os dados; não use `--volumes` se quiser mantê-los.
+
+## Publicação no Render
+
+O arquivo `render.yaml` configura a API e um PostgreSQL para demonstração.
+Ele aponta para a branch `Nicolas-Assis-F/terminar` deste repositório.
+
+1. Entre em [Render](https://dashboard.render.com/), escolha **New → Blueprint**
+   e conecte este repositório.
+2. Selecione a branch `Nicolas-Assis-F/terminar` e revise os recursos do blueprint.
+3. Aplique o blueprint e aguarde a implantação. A URL pública aparece no serviço
+   `baiao-api`; verifique `/ready` e `/api/v1/catalogs`.
+
+O comando `start:deploy` aplica migrações e popula somente as tabelas de domínio.
+Os seeds podem ser repetidos e não criam usuários ou produtos fictícios.
+A API mantém o escopo acadêmico original, sem autenticação: todos os endpoints
+ficam acessíveis a quem conhecer a URL. Use dados de demonstração.
+O plano gratuito tem limites e expiração do banco; consulte a
+[documentação do Render](https://render.com/docs/free) antes de guardar dados permanentes.
+
+Para outro provedor Node.js, use build `npm ci --include=dev && npm run build`,
+start `npm run start:deploy`, `DATABASE_URL` e `NODE_ENV=production`.
+`DB_SSL=true` habilita TLS com verificação de certificado; `CORS_ORIGIN` aceita
+uma lista de origens separadas por vírgula. A aplicação respeita `PORT`.
 
 ## License
 
