@@ -20,7 +20,7 @@
     "dev:api": "node --watch -r ts-node/register src/server.ts",
     "dev:web": "npm --prefix web run dev",
     "build:api": "tsc",
-    "postinstall": "npm --prefix web ci",
+    "postinstall": "npm --prefix web ci --include=dev",
     "setup": "node scripts/setup.cjs",
     "seed:demo": "ts-node src/seeds/demo.ts",
     "seed:demo:prod": "node dist/seeds/demo.js",
