@@ -1,22 +1,32 @@
 {
-  "name": "baiao-api",
+  "name": "campuslab",
   "version": "1.0.0",
-  "description": "RESTful API with Node.js, Express, TypeScript, TypeORM and PostgreSQL",
+  "description": "CampusLab: gestão acadêmica de equipamentos e empréstimos",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "node --watch -r ts-node/register src/server.ts",
-    "build": "tsc",
+    "dev": "concurrently -k -n API,WEB \"npm:dev:api\" \"npm:dev:web\"",
+    "build": "npm run build:api && npm --prefix web run build",
     "start": "node dist/server.js",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "npm run typeorm -- migration:generate src/migrations/migration -d src/config/database.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/config/database.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d src/config/database.ts",
     "seed": "ts-node src/seeds/seed.ts",
-    "test": "npm run build && node --test tests/*.test.cjs",
-    "test:integration": "npm run build && node --test tests/integration.cjs",
+    "test": "npm run build:api && node --test tests/*.test.cjs",
+    "test:integration": "npm run build:api && node --test tests/integration.cjs tests/loans.integration.cjs",
     "migration:run:prod": "typeorm migration:run -d dist/config/database.js",
     "seed:prod": "node dist/seeds/seed.js",
-    "start:deploy": "npm run migration:run:prod && npm run seed:prod && npm start"
+    "start:deploy": "npm run migration:run:prod && npm run seed:prod && npm start",
+    "dev:api": "node --watch -r ts-node/register src/server.ts",
+    "dev:web": "npm --prefix web run dev",
+    "build:api": "tsc",
+    "postinstall": "npm --prefix web ci",
+    "setup": "node scripts/setup.cjs",
+    "seed:demo": "ts-node src/seeds/demo.ts",
+    "seed:demo:prod": "node dist/seeds/demo.js",
+    "test:e2e": "playwright test",
+    "start:demo": "npm run migration:run:prod && npm run seed:prod && npm run seed:demo:prod && npm start",
+    "format": "prettier --write \"src/**/*.ts\" \"web/src/**/*.{ts,tsx,css}\" \"tests/**/*.{ts,cjs}\" \"docs/*.md\" README.md"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -28,9 +38,12 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
+    "concurrently": "^9.2.5",
+    "prettier": "^3.9.10",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.3"

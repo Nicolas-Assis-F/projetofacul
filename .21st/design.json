@@ -1,0 +1,9 @@
+{
+  "name": "CampusLab",
+  "decisions": [
+    "Dashboard acadêmico em português, verde-floresta e sálvia, fundo claro.",
+    "shadcn/ui Radix Nova, Lucide, DM Sans e Manrope locais.",
+    "Referências públicas da 21st.dev; busca autenticada indisponível nesta sessão.",
+    "Navegação lateral no desktop, menu acessível no celular, tabelas com rolagem interna."
+  ]
+}

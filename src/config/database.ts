@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import path from "path";
 import { DataSource } from "typeorm";
+import { Loan } from "../entities/Loan";
 import dotenv from "dotenv";
 import { Situation } from "../entities/Situation";
 import { User } from "../entities/User";
@@ -21,7 +22,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || "baiao_db",
   synchronize: false,
   logging: process.env.NODE_ENV === "development",
-  entities: [Situation, User, ProductCategory, ProductSituation, Product],
+  entities: [Situation, User, ProductCategory, ProductSituation, Product, Loan],
   migrations: [path.join(__dirname, "..", "migrations", "*{.ts,.js}")],
   subscribers: [],
 });

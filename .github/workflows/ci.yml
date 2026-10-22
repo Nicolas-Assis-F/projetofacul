@@ -1,4 +1,4 @@
-name: API checks
+name: CampusLab checks
 on: [push, pull_request]
 jobs:
   test:
@@ -16,7 +16,7 @@ jobs:
           --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       DATABASE_URL: postgres://baiao:test_password@localhost:5432/baiao_test
-      TEST_DATABASE: 'true'
+      TEST_DATABASE: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,8 +24,16 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run build
       - run: npm test
       - run: npm run migration:run:prod
       - run: npm run seed:prod
       - run: npm run seed:prod
       - run: npm run test:integration
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-traces
+          path: test-results/

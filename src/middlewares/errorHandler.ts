@@ -2,7 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { QueryFailedError } from "typeorm";
 import { HttpError } from "./validateParams";
 
-export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction): void {
+export function errorHandler(
+  err: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+): void {
   if (err instanceof HttpError) {
     res.status(err.status).json({ message: err.message });
     return;
@@ -19,11 +24,24 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
   if (err instanceof QueryFailedError) {
     const code = (err.driverError as { code?: string }).code;
     if (code === "23505") {
-      res.status(409).json({ message: "Email already registered" });
+      res
+        .status(409)
+        .json({
+          message:
+            (err.driverError as { constraint?: string }).constraint ===
+            "one_active_loan_per_product"
+              ? "Este equipamento já está emprestado."
+              : "Este e-mail já está cadastrado.",
+        });
       return;
     }
     if (code === "23503") {
-      res.status(422).json({ message: "Referenced situation or category does not exist" });
+      res
+        .status(422)
+        .json({
+          message:
+            "Referência inválida ou registro vinculado a um empréstimo. Preserve o histórico: inative o cadastro em vez de excluí-lo.",
+        });
       return;
     }
   }

@@ -6,11 +6,13 @@ export const createProductSchema = z.object({
   productCategoryId: z.number().int().positive().max(2147483647),
 });
 
-export const updateProductSchema = createProductSchema.partial().strict().refine(
-  (data) => Object.keys(data).length > 0,
-  { message: "Provide at least one field to update" },
-);
+export const updateProductSchema = createProductSchema
+  .partial()
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide at least one field to update",
+  });
 //ola
-//Vou terminar professor 
+//Vou terminar professor
 //e os bate estaca
 // si foda falou

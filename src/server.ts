@@ -17,7 +17,9 @@ AppDataSource.initialize()
       const timeout = setTimeout(() => process.exit(1), 10000);
       timeout.unref();
       server.close(() => {
-        AppDataSource.destroy().then(() => process.exit(0)).catch(() => process.exit(1));
+        AppDataSource.destroy()
+          .then(() => process.exit(0))
+          .catch(() => process.exit(1));
       });
     };
     process.once("SIGTERM", shutdown);

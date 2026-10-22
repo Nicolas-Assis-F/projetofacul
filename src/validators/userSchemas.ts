@@ -6,7 +6,9 @@ export const createUserSchema = z.object({
   situationId: z.number().int().positive().max(2147483647),
 });
 
-export const updateUserSchema = createUserSchema.partial().strict().refine(
-  (data) => Object.keys(data).length > 0,
-  { message: "Provide at least one field to update" },
-);
+export const updateUserSchema = createUserSchema
+  .partial()
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide at least one field to update",
+  });

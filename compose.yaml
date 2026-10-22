@@ -14,6 +14,7 @@ services:
       retries: 10
   api:
     build: .
+    command: npm run start:demo
     ports:
       - "${PORT:-3000}:3000"
     environment:

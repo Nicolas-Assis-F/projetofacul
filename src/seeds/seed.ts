@@ -23,11 +23,11 @@ async function seed(): Promise<void> {
 
   const categoryRepo = AppDataSource.getRepository(ProductCategory);
   const categories = [
-    "Electronics",
-    "Clothing",
-    "Food & Beverages",
-    "Home & Garden",
-    "Sports",
+    "Informática",
+    "Audiovisual",
+    "Prototipagem",
+    "Instrumentação",
+    "Acessórios",
   ];
   for (const name of categories) {
     const exists = await categoryRepo.findOneBy({ name });
